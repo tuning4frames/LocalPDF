@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f5f2ea" />
+    <meta name="description" content="A private PDF toolbox that runs entirely in your browser." />
+    <title>LocalPDF</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#">LOCAL<span>PDF</span></a>
+      <p>Private by default · Your files never leave this device</p>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Everyday PDF tools. <em>Entirely yours.</em></h1>
+        <p class="intro">Merge, split, organize, optimize, and turn images into PDFs. Everything happens locally in your browser.</p>
+      </section>
+
+      <section class="tools" aria-label="PDF tools">
+        <button class="tool active" data-tool="merge"><i data-lucide="squares-unite" aria-hidden="true"></i><strong>Merge PDF</strong><small>Combine files in order</small></button>
+        <button class="tool" data-tool="split"><i data-lucide="square-split-horizontal" aria-hidden="true"></i><strong>Split PDF</strong><small>Extract selected pages</small></button>
+        <button class="tool" data-tool="organize"><i data-lucide="list-restart" aria-hidden="true"></i><strong>Organize PDF</strong><small>Reorder or remove pages</small></button>
+        <button class="tool" data-tool="images"><i data-lucide="images" aria-hidden="true"></i><strong>Images to PDF</strong><small>JPG and PNG files</small></button>
+        <button class="tool" data-tool="compress"><i data-lucide="minimize-2" aria-hidden="true"></i><strong>Optimize PDF</strong><small>Clean document structure</small></button>
+      </section>
+
+      <section class="workspace">
+        <div class="workspace-head">
+          <div><h2 id="tool-title">Merge PDF</h2></div>
+          <p id="tool-description">Add two or more PDF files and arrange them in the order you want.</p>
+        </div>
+
+        <div class="dropzone" id="dropzone" tabindex="0" role="button">
+          <input type="file" id="file-input" hidden multiple accept="application/pdf" />
+          <i class="upload-icon" data-lucide="upload" aria-hidden="true"></i>
+          <h3 id="drop-title">Drop PDFs here</h3>
+          <p id="drop-hint">or click to choose files</p>
+        </div>
+
+        <div class="file-area" id="file-area" hidden>
+          <div class="file-list" id="file-list"></div>
+          <div class="file-controls">
+            <button class="add-more" id="add-more" type="button"><i data-lucide="plus" aria-hidden="true"></i> Add more files</button>
+            <button class="primary" id="process-button" disabled><span id="process-label">Merge and download</span><i data-lucide="download" aria-hidden="true"></i></button>
+          </div>
+        </div>
+
+        <div class="options" id="options"></div>
+        <div class="message" id="message" role="status" aria-live="polite"></div>
+
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
