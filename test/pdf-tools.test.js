@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { PDFDocument, rgb } from "pdf-lib";
-import { imagesToPdf, mergePdfs, optimizePdf, parsePages, savePdf, selectPdfPages } from "../src/pdf-tools.js";
+import { addPdfPageNumbers, addPdfWatermark, cropPdfPages, imagesToPdf, mergePdfs, optimizePdf, parsePages, repairPdf, rotatePdfPages, savePdf, selectPdfPages } from "../src/pdf-tools.js";
 
 async function fixture(pageCount, width = 200) {
   const pdf = await PDFDocument.create();
@@ -54,4 +54,52 @@ test("optimization produces a readable document with all pages", async () => {
   const loaded = await PDFDocument.load(bytes);
   assert.equal(loaded.getPageCount(), 3);
   assert.ok(bytes.length > 0);
+});
+
+test("rotate changes only selected pages and preserves existing rotation", async () => {
+  const input = await fixture(3, 200);
+  const firstPass = await rotatePdfPages(input, [0, 2], 90);
+  const secondPass = await rotatePdfPages(await savePdf(firstPass), [2], 90);
+  const loaded = await PDFDocument.load(await savePdf(secondPass));
+  assert.deepEqual(loaded.getPages().map((page) => page.getRotation().angle), [90, 0, 180]);
+  assert.deepEqual(loaded.getPages().map((page) => page.getSize()), [
+    { width: 200, height: 300 }, { width: 201, height: 300 }, { width: 202, height: 300 }
+  ]);
+});
+
+test("page numbering preserves all pages and adds page content", async () => {
+  const input = await fixture(3, 200);
+  const output = await addPdfPageNumbers(input, { indices: [1, 2], start: 7, position: "top-right" });
+  const bytes = await savePdf(output);
+  const loaded = await PDFDocument.load(bytes);
+  assert.equal(loaded.getPageCount(), 3);
+  assert.ok(bytes.length > 0);
+  assert.notDeepEqual(bytes, input);
+  assert.ok(loaded.getPage(1).node.Contents());
+  assert.ok(loaded.getPage(2).node.Contents());
+});
+
+test("watermark adds content while preserving pages", async () => {
+  const input = await fixture(2, 300);
+  const output = await addPdfWatermark(input, { text: "PRIVATE", indices: [0], opacity: 0.2 });
+  const loaded = await PDFDocument.load(await savePdf(output));
+  assert.equal(loaded.getPageCount(), 2);
+  assert.ok(loaded.getPage(0).node.Contents());
+  await assert.rejects(() => addPdfWatermark(input, { text: "" }), /watermark text/i);
+});
+
+test("crop applies selected page crop boxes", async () => {
+  const input = await fixture(2, 300);
+  const output = await cropPdfPages(input, [1], { top: 10, right: 20, bottom: 30, left: 40 });
+  const loaded = await PDFDocument.load(await savePdf(output));
+  assert.deepEqual(loaded.getPage(1).getCropBox(), { x: 40, y: 30, width: 241, height: 260 });
+  await assert.rejects(() => cropPdfPages(input, [0], { left: 200, right: 200 }), /larger than the page/i);
+});
+
+test("repair rewrites all readable pages into a new PDF", async () => {
+  const input = await fixture(3, 240);
+  const output = await repairPdf(input);
+  const loaded = await PDFDocument.load(await savePdf(output));
+  assert.equal(loaded.getPageCount(), 3);
+  assert.deepEqual(loaded.getPages().map((page) => page.getWidth()), [240, 241, 242]);
 });

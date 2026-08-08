@@ -1,18 +1,29 @@
 # LocalPDF
 
-![LocalPDF interface](docs/localpdf-preview.png)
+![LocalPDF interface](assets/localpdf-preview.png)
 
-LocalPDF is a private, local-first PDF toolbox I made for everyday document tasks without uploading personal files to a website.
+A private, local-first collection of everyday PDF tools I originally made for myself. Files are processed directly in your browser—they are never uploaded to a server.
 
-## Features
+## What it can do
 
-- Merge multiple PDFs
-- Extract pages from a PDF
-- Reorder or remove pages
+### PDF tools
+
+- Merge, split, organize, rotate, crop, optimize, and repair PDFs
 - Convert JPG and PNG images into a PDF
-- Losslessly optimize PDF structure
-- Drag-and-drop interface
-- Processing entirely inside the browser
+- Add page numbers and text watermarks
+- Protect PDFs with a password or unlock them using the current password
+
+### Document conversions
+
+- PDF ↔ Word (`DOCX`)
+- PDF ↔ PowerPoint (`PPTX`)
+- PDF ↔ Excel (`XLSX` / `XLS`)
+
+Office conversions focus on readable, editable content. Complex layouts, fonts, charts, animations, images, and exact positioning may change or be omitted.
+
+## Privacy
+
+LocalPDF has no backend, accounts, analytics, upload endpoint, or runtime network requirement. Your documents stay on your device and are processed in browser memory.
 
 ## Run locally
 
@@ -23,28 +34,19 @@ npm install
 npm run dev
 ```
 
-## Build
+## Test and build
 
 ```powershell
+npm test
 npm run build
 ```
 
-The production site is written to `dist` and can be served by any static web server.
-
-## Privacy
-
-Your files are read and processed locally by the browser. LocalPDF has no backend, accounts, analytics, or upload endpoint.
-
-## Current limitations
-
-- Encrypted or password-protected PDFs are not supported yet.
-- Optimization rewrites PDF structure without reducing image quality. Strong compression of scanned PDFs will require a later image-rendering layer.
-- Image conversion currently supports JPG and PNG.
+The production build is written to `dist` and can be hosted by any static web server.
 
 ## License
 
 The source code and functionality are available under the [MIT License](LICENSE).
 
-The LocalPDF user-interface design, visual styling, layout, and branding are excluded from the MIT license. They may be used for personal, non-commercial purposes only. You may not redistribute, publish, sell, or use the UI design in another public or commercial product without permission.
+The LocalPDF user-interface design, visual styling, layout, and branding are excluded from the MIT License. They may be used for personal, non-commercial purposes only. You may not redistribute, publish, sell, or reuse the UI design in another public or commercial product without permission.
 
 Interface icons are provided by [Lucide](https://lucide.dev/) under the ISC License.

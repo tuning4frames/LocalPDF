@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import { degrees, PDFDocument, StandardFonts, rgb } from "pdf-lib";
 
 export function parsePages(value, count) {
   const pages = [];
@@ -55,6 +55,70 @@ export async function imagesToPdf(images) {
 
 export async function optimizePdf(pdfBuffer) {
   return PDFDocument.load(pdfBuffer);
+}
+
+export async function rotatePdfPages(pdfBuffer, indices, angle) {
+  const pdf = await PDFDocument.load(pdfBuffer);
+  indices.forEach((index) => {
+    const page = pdf.getPage(index);
+    const current = page.getRotation().angle || 0;
+    page.setRotation(degrees((current + angle) % 360));
+  });
+  return pdf;
+}
+
+export async function addPdfPageNumbers(pdfBuffer, options = {}) {
+  const pdf = await PDFDocument.load(pdfBuffer);
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  const indices = options.indices ?? pdf.getPageIndices();
+  const start = options.start ?? 1;
+  const position = options.position ?? "bottom-center";
+  const fontSize = 10;
+
+  indices.forEach((pageIndex, sequence) => {
+    const page = pdf.getPage(pageIndex);
+    const label = String(start + sequence);
+    const { width, height } = page.getSize();
+    const textWidth = font.widthOfTextAtSize(label, fontSize);
+    const left = 28;
+    const center = (width - textWidth) / 2;
+    const right = width - textWidth - 28;
+    const x = position.endsWith("left") ? left : position.endsWith("right") ? right : center;
+    const y = position.startsWith("top") ? height - 32 : 24;
+    page.drawText(label, { x, y, size: fontSize, font, color: rgb(0.15, 0.15, 0.13) });
+  });
+  return pdf;
+}
+
+export async function addPdfWatermark(pdfBuffer, { text, indices, opacity = 0.2 } = {}) {
+  if (!text?.trim()) throw new Error("Enter watermark text.");
+  const pdf = await PDFDocument.load(pdfBuffer);
+  const font = await pdf.embedFont(StandardFonts.Helvetica);
+  for (const index of indices ?? pdf.getPageIndices()) {
+    const page = pdf.getPage(index), { width, height } = page.getSize(), size = 42;
+    const textWidth = font.widthOfTextAtSize(text, size);
+    page.drawText(text, { x: (width - textWidth) / 2, y: height / 2, size, font, opacity, rotate: degrees(-35), color: rgb(.2,.2,.18) });
+  }
+  return pdf;
+}
+
+export async function cropPdfPages(pdfBuffer, indices, margins) {
+  const pdf = await PDFDocument.load(pdfBuffer);
+  const values = Object.fromEntries(["top","right","bottom","left"].map((key) => [key, Math.max(0, Number(margins[key]) || 0)]));
+  for (const index of indices) {
+    const page = pdf.getPage(index), { width, height } = page.getSize();
+    if (values.left + values.right >= width || values.top + values.bottom >= height) throw new Error("Crop margins are larger than the page.");
+    page.setCropBox(values.left, values.bottom, width - values.left - values.right, height - values.top - values.bottom);
+  }
+  return pdf;
+}
+
+export async function repairPdf(pdfBuffer) {
+  const source = await PDFDocument.load(pdfBuffer, { updateMetadata: false });
+  const output = await PDFDocument.create();
+  const pages = await output.copyPages(source, source.getPageIndices());
+  pages.forEach((page) => output.addPage(page));
+  return output;
 }
 
 export function savePdf(pdf) {
