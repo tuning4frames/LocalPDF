@@ -1,5 +1,7 @@
 # LocalPDF
 
+![LocalPDF interface](docs/localpdf-preview.png)
+
 LocalPDF is a private, local-first PDF toolbox I made for everyday document tasks without uploading personal files to a website.
 
 ## Features
