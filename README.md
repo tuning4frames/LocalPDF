@@ -9,8 +9,17 @@ A private, local-first collection of everyday PDF tools I originally made for my
 ### PDF tools
 
 - Merge, split, organize, rotate, crop, optimize, and repair PDFs
+- Multi-file split (page ranges, fixed intervals, or one file per page)
+- Compress PDFs with real size reduction (quality presets)
 - Convert JPG and PNG images into a PDF
 - Add page numbers and text watermarks
+- Stamp custom text or images onto pages
+- Sign PDFs (draw or type a signature)
+- N-up layouts (2, 4, 6, or 9 pages per sheet)
+- Flatten forms and annotations
+- Edit PDF metadata (title, author, subject, keywords)
+- Compare the text of two PDFs
+- View PDFs in the app
 - Protect PDFs with a password or unlock them using the current password
 
 ### Document conversions
@@ -18,6 +27,8 @@ A private, local-first collection of everyday PDF tools I originally made for my
 - PDF ↔ Word (`DOCX`)
 - PDF ↔ PowerPoint (`PPTX`)
 - PDF ↔ Excel (`XLSX` / `XLS`)
+- PDF → Images (`PNG` / `JPG`, zipped) and plain text
+- HTML → PDF
 
 Office conversions focus on readable, editable content. Complex layouts, fonts, charts, animations, images, and exact positioning may change or be omitted.
 
